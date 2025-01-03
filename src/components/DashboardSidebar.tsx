@@ -3,6 +3,7 @@ import React from "react";
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarHeader,
   SidebarMenuButton,
   useSidebar,
@@ -10,6 +11,7 @@ import {
 import Image from "next/image";
 import { Files, Key, LayoutDashboard } from "lucide-react";
 import Link from "next/link";
+import UserAvatar from "./UserAvatar";
 const navItems = [
   {
     name: "Dashboard",
@@ -56,6 +58,9 @@ export default function DashboardSidebar({
           </SidebarMenuButton>
         ))}
       </SidebarContent>
+      <SidebarFooter>
+        <UserAvatar />
+      </SidebarFooter>
     </Sidebar>
   );
 }
