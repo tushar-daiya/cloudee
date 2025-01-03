@@ -9,54 +9,59 @@ generator client {
 }
 
 datasource db {
-  provider = "mongodb"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-model Folder {
-  id        String   @id @map("_id")
-  name      String
-  createdAt DateTime
-  updatedAt DateTime
-  Files     File[]
-  userId    String
-  user      User     @relation(fields: [userId], references: [id])
-}
-
 model File {
-  id        String   @id @map("_id")
+  id        Int      @id @default(autoincrement())
   name      String
   file_id   String   @unique
   type      String
   size      Int
   userId    String
-  folderId  String?
-  createdAt DateTime
-  updatedAt DateTime
+  folderId  Int?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
   user      User     @relation(fields: [userId], references: [id])
   folder    Folder?  @relation(fields: [folderId], references: [id])
+
+  @@unique([name, userId])
+}
+
+model Folder {
+  id        Int      @id @default(autoincrement())
+  name      String
+  Files     File[]
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@unique([name, userId])
 }
 
 model User {
-  id            String    @id @map("_id")
+  id            String    @id
   name          String
   email         String
   emailVerified Boolean
   image         String?
-  apiKey        String?
-  folders       Folder[]
-  files         File[]
   createdAt     DateTime
   updatedAt     DateTime
   sessions      Session[]
   accounts      Account[]
+  File          File[]
+  Folder        Folder[]
+  apiKey        String?
 
   @@unique([email])
   @@map("user")
 }
 
 model Session {
-  id        String   @id @map("_id")
+  id        String   @id
   expiresAt DateTime
   token     String
   createdAt DateTime
@@ -71,7 +76,7 @@ model Session {
 }
 
 model Account {
-  id                    String    @id @map("_id")
+  id                    String    @id
   accountId             String
   providerId            String
   userId                String
@@ -90,7 +95,7 @@ model Account {
 }
 
 model Verification {
-  id         String    @id @map("_id")
+  id         String    @id
   identifier String
   value      String
   expiresAt  DateTime
