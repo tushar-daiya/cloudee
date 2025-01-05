@@ -7,9 +7,9 @@ const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN as string;
 const uploadFileToTelegram = async (file: File) => {
   const formData = new FormData();
   formData.append("chat_id", TELEGRAM_CHAT_ID);
-  formData.append("document", file);
+  formData.append("photo", file);
   const res = await fetch(
-    `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendDocument`,
+    `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendPhoto`,
     {
       method: "POST",
       body: formData,
@@ -47,6 +47,16 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
+    //dont allow files other than images
+    if(!file.type.includes("image")){
+        return NextResponse.json(
+            {
+              message: "Only images are allowed",
+              success: false,
+            },
+            { status: 400 }
+          );
+    }
 
     //check for file size
 
@@ -78,7 +88,7 @@ export async function POST(request: NextRequest) {
       );
     }
     const telegramRes = await uploadFileToTelegram(file);
-
+    console.log(telegramRes?.result?.photo.at(-1));
     if (!telegramRes.ok) {
       return NextResponse.json(
         {
@@ -96,13 +106,13 @@ export async function POST(request: NextRequest) {
       const uploadedFile = await prisma.file.create({
         data: {
           name: file.name + Math.floor(Math.random() * 1000),
-          file_id: telegramRes.result.document.file_id,
-          type: telegramRes.result.document.mime_type,
-          size: telegramRes.result.document.file_size,
+          file_id: telegramRes.result.photo.at(-1).file_id,
+          type: file.type,
+          size: telegramRes.result.photo.at(-1).file_size,
           url:
             process.env.BACKEND_URL +
             "/file/" +
-            telegramRes.result.document.file_id,
+            telegramRes.result.photo.at(-1).file_id,
           user: {
             connect: {
               id: user.id,
@@ -146,13 +156,13 @@ export async function POST(request: NextRequest) {
     const uploadedFile = await prisma.file.create({
       data: {
         name: file.name + Math.floor(Math.random() * 1000),
-        file_id: telegramRes.result.document.file_id,
-        type: telegramRes.result.document.mime_type,
-        size: telegramRes.result.document.file_size,
+        file_id: telegramRes.result.photo.at(-1).file_id,
+        type: file.type,
+        size: telegramRes.result.photo.at(-1).file_size,
         url:
           process.env.BACKEND_URL +
           "/file/" +
-          telegramRes.result.document.file_id,
+          telegramRes.result.photo.at(-1).file_id,
         user: {
           connect: {
             id: user.id,
