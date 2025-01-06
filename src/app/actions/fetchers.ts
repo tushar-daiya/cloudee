@@ -25,6 +25,26 @@ export const getApiKeys = async () => {
   return { success: true, data: apiKey };
 };
 
+export interface File {
+  id: number;
+  name: string;
+  file_id: string;
+  type: string;
+  size: number;
+  userId: string;
+  folderId: number | null;
+  url: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+export interface Folder {
+  id: number;
+  name: string;
+  userId: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 export const getFilesandFolders = async (page: number = 1) => {
   const session = await auth.api.getSession({
     headers: await headers(),
