@@ -186,7 +186,7 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.log(error);
+    console.log(error.stack);
     if (
       error?.message ===
       `Content-Type was not one of "multipart/form-data" or "application/x-www-form-urlencoded".`

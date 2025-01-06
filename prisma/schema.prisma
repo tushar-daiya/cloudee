@@ -16,7 +16,7 @@ datasource db {
 model File {
   id        Int      @id @default(autoincrement())
   name      String
-  file_id   String   @unique
+  file_id   String
   type      String
   size      Int
   userId    String
