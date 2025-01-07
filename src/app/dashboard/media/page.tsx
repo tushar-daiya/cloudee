@@ -1,5 +1,6 @@
 import { getFilesandFolders } from "@/app/actions/fetchers";
 import DataTable from "./DataTable";
+import PaginationMedia from "./PaginationMedia";
 
 export default async function page(props: {
   searchParams?: Promise<{
@@ -8,7 +9,6 @@ export default async function page(props: {
 }) {
   const searchParams = await props.searchParams;
   const { data } = await getFilesandFolders(searchParams?.page);
-  console.log(data);
   return (
     <div>
       <div className="flex p-4 border-b">
@@ -22,6 +22,10 @@ export default async function page(props: {
         </p>
         <div className="my-4">
           <DataTable folders={data?.folders} files={data?.files} />
+          <PaginationMedia
+            currentPage={searchParams?.page || 1}
+            totalPages={data?.totalPages}
+          />
         </div>
       </div>
     </div>
